@@ -12,8 +12,10 @@ Feature: Skeleton rollout into tenant repos
       | app-1/edge.yaml        | apiVersion: v1\nkind: Edge\n...        |
     And a fake tenant repo at "testdata/repos/ott-ref-app" with a main branch
     And a config file "testdata/config.yaml" containing:
-      | skeleton    | testdata/skeleton          |
-      | tenantRepos | testdata/repos/ott-ref-app |
+      | skeleton        | testdata/skeleton          |
+      | applicationsDir | .applications              |
+      | tenantRepos     | testdata/repos/ott-ref-app |
+      | tenantRepos     | testdata/repos/ovp         |
 
   Scenario: Run rollout writes files and opens PR
     When I execute `1ai-pr rollout --config testdata/config.yaml --dry-run`

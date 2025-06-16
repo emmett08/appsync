@@ -156,7 +156,6 @@ func runDryRun(cfgPath string) error {
 /*  Utility                                                                   */
 /* -------------------------------------------------------------------------- */
 
-// copyDir copies the *files* (not sub-directories) in src → dst.
 func copyDir(src, dst string) error {
 	if err := os.MkdirAll(dst, 0o755); err != nil {
 		return err

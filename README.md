@@ -1,3 +1,9 @@
+## Building
+
+```shell
+go build ./...
+```
+
 ## Testing
 
 ```shell

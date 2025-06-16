@@ -48,14 +48,31 @@ func aFakeTenantRepoAt(path string) error {
 	if err := os.MkdirAll(path, 0o755); err != nil {
 		return err
 	}
+
 	init := exec.Command("git", "init", "--initial-branch=main")
 	init.Dir = path
 	if err := init.Run(); err != nil {
-		return err
+		return fmt.Errorf("git init: %w", err)
 	}
+
+	cfgName := exec.Command("git", "config", "user.name", "Test User")
+	cfgName.Dir = path
+	if err := cfgName.Run(); err != nil {
+		return fmt.Errorf("git config user.name: %w", err)
+	}
+	cfgEmail := exec.Command("git", "config", "user.email", "test@example.com")
+	cfgEmail.Dir = path
+	if err := cfgEmail.Run(); err != nil {
+		return fmt.Errorf("git config user.email: %w", err)
+	}
+
 	commit := exec.Command("git", "commit", "--allow-empty", "-m", "initial")
 	commit.Dir = path
-	return commit.Run()
+	if err := commit.Run(); err != nil {
+		return fmt.Errorf("git commit: %w", err)
+	}
+
+	return nil
 }
 
 func iExecuteCLI(cmdline string) error {
