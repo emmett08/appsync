@@ -1,0 +1,5 @@
+## Testing
+
+```shell
+go test ./...
+```
