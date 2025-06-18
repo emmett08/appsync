@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/emmett08/appsync/internal/config"
 	"github.com/emmett08/appsync/internal/domain"
@@ -17,21 +16,40 @@ type CatalogScanner struct {
 
 func (s CatalogScanner) Scan(ctx context.Context) ([]domain.ApplicationDescriptor, error) {
 	var out []domain.ApplicationDescriptor
-	err := filepath.WalkDir(s.Root, func(path string, d os.DirEntry, err error) error {
-		if err != nil || !d.IsDir() {
-			return err
+
+	teams, err := os.ReadDir(s.Root)
+	if err != nil {
+		return nil, err
+	}
+	for _, teamEntry := range teams {
+		if !teamEntry.IsDir() {
+			continue
 		}
-		rel, _ := filepath.Rel(s.Root, path)
-		parts := strings.Split(rel, string(filepath.Separator))
-		if len(parts) != 2 {
-			return nil
+		team := teamEntry.Name()
+		if s.Filter.Team != "" && s.Filter.Team != team {
+			continue
 		}
-		team, app := parts[0], parts[1]
-		if !s.Filter.Match(team, app) {
-			return filepath.SkipDir
+
+		teamPath := filepath.Join(s.Root, team)
+		apps, err := os.ReadDir(teamPath)
+		if err != nil {
+			return nil, err
 		}
-		out = append(out, domain.ApplicationDescriptor{Team: team, App: app, SourcePath: path})
-		return filepath.SkipDir
-	})
-	return out, err
+		for _, appEntry := range apps {
+			if !appEntry.IsDir() {
+				continue
+			}
+			app := appEntry.Name()
+			if s.Filter.App != "" && s.Filter.App != app {
+				continue
+			}
+			out = append(out, domain.ApplicationDescriptor{
+				Team:       team,
+				App:        app,
+				SourcePath: filepath.Join(teamPath, app),
+			})
+		}
+	}
+
+	return out, nil
 }

@@ -16,7 +16,8 @@ Invoke the same binary with different filters in your CI pipeline to promote gra
 
 ```bash
 # Build the CLI
-go build -o appsync ./cmd/appsync
+go build -o appsync .
+chmod +x appsync
 
 # Acquire a GitHub token via the GitHub CLI
 export GITHUB_TOKEN="$(gh auth token)"
@@ -30,6 +31,11 @@ export GITHUB_TOKEN="$(gh auth token)"
   --app ott-reference-app \
   --mode pr \
   --token "$GITHUB_TOKEN"
+  
+./appsync generate --root ./sample --repos-file repos.yaml --token $GITHUB_TOKEN
+
+./appsync sync --root ./sample --repos-file repos.yaml --mode feature --token=$GITHUB_TOKEN
+
 ```
 
 ---

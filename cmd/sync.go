@@ -2,71 +2,98 @@ package cmd
 
 import (
 	"context"
+	"fmt"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/emmett08/appsync/internal/app"
 	"github.com/emmett08/appsync/internal/config"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 func init() {
 	var (
-		root    string
-		dest    string
-		owner   string
-		repo    string
-		mode    string
-		team    string
-		appName string
+		root      string
+		reposFile string
+		mode      string
+		token     string
 	)
 	cmd := &cobra.Command{
 		Use:   "sync",
-		Short: "Copy skeleton CRDs and raise PRs",
+		Short: "Push local manifests under <root> into each team's repo (opens PRs)",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			token, _ := cmd.Flags().GetString("token")
-			f := config.Filter{Team: team, App: appName}
-
-			scanner := app.CatalogScanner{Root: root, Filter: f}
-			factory := app.CRDFactory{}
-			renderer := app.ManifestRenderer{}
-			gateway := app.NewGitHubGateway(token, owner, repo)
-
-			var strat app.PRStrategy
-			if mode == "direct" {
-				strat = app.DirectCommitStrategy{}
-			} else {
-				strat = app.FeatureBranchPRStrategy{}
+			data, err := os.ReadFile(reposFile)
+			if err != nil {
+				return fmt.Errorf("read repos file: %w", err)
+			}
+			var wrapper struct {
+				Repos config.RepoConfigs `yaml:"repos"`
+			}
+			if err := yaml.Unmarshal(data, &wrapper); err != nil {
+				return fmt.Errorf("unmarshal repos file: %w", err)
 			}
 
-			coord := app.SyncCoordinator{
-				Scanner:    scanner,
-				Factory:    factory,
-				Renderer:   renderer,
-				Gateway:    gateway,
-				PRStrategy: strat,
-				TargetRoot: dest,
+			filesByTeam := map[string]map[string][]byte{}
+			err = filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+				if err != nil {
+					return err
+				}
+				if d.IsDir() {
+					return nil
+				}
+				rel, err := filepath.Rel(root, path)
+				if err != nil {
+					return err
+				}
+				parts := strings.Split(rel, string(os.PathSeparator))
+				team := parts[0]
+				if _, ok := filesByTeam[team]; !ok {
+					filesByTeam[team] = map[string][]byte{}
+				}
+				content, err := os.ReadFile(path)
+				if err != nil {
+					return err
+				}
+				filesByTeam[team][rel] = content
+				return nil
+			})
+			if err != nil {
+				return fmt.Errorf("walk root: %w", err)
 			}
-			return coord.Sync(context.Background())
+
+			for team, files := range filesByTeam {
+				owner, repoName, ok := wrapper.Repos.ForTeam(team)
+				if !ok {
+					return fmt.Errorf("no repository configured for team %s", team)
+				}
+				gw := app.GitHubGatewayFactory{}.New(token, owner, repoName)
+
+				var strat app.PRStrategy
+				if mode == "direct" {
+					strat = app.DirectCommitStrategy{}
+				} else {
+					strat = app.FeatureBranchPRStrategy{}
+				}
+
+				if err := strat.Apply(context.Background(), gw, files); err != nil {
+					return fmt.Errorf("applying PR strategy for team %s: %w", team, err)
+				}
+				fmt.Printf("sync complete for team %s → %s/%s\n", team, owner, repoName)
+			}
+
+			return nil
 		},
 	}
-	cmd.Flags().StringVar(&root, "root", "", "catalog root")
-	cmd.Flags().StringVar(&dest, "dest", "/tmp/appsync", "working dir")
-	cmd.Flags().StringVar(&owner, "owner", "", "GitHub owner")
-	cmd.Flags().StringVar(&repo, "repo", "", "GitHub repo")
-	cmd.Flags().StringVar(&mode, "mode", "pr", "direct | pr")
-	cmd.Flags().StringVar(&team, "team", "", "filter by team")
-	cmd.Flags().StringVar(&appName, "app", "", "filter by application")
-	err := cmd.MarkFlagRequired("root")
-	if err != nil {
-		return
-	}
-	err = cmd.MarkFlagRequired("owner")
-	if err != nil {
-		return
-	}
-	err = cmd.MarkFlagRequired("repo")
-	if err != nil {
-		return
-	}
+
+	cmd.Flags().StringVar(&root, "root", "", "root directory containing generated manifests (required)")
+	cmd.Flags().StringVar(&reposFile, "repos-file", "", "path to YAML file listing team→owner/repo mappings (required)")
+	cmd.Flags().StringVar(&mode, "mode", "feature", `PR strategy: "direct" | "feature"`)
+	cmd.Flags().StringVar(&token, "token", "", "GitHub API token (or set GITHUB_TOKEN)")
+	_ = cmd.MarkFlagRequired("root")
+	_ = cmd.MarkFlagRequired("repos-file")
 
 	RootCmd.AddCommand(cmd)
 }

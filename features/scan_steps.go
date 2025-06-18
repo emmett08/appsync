@@ -21,7 +21,7 @@ var (
 
 func setupCatalog(paths []string) error {
 	var err error
-	tmpRoot, err = os.MkdirTemp("", "catalog")
+	tmpRoot, err = os.MkdirTemp("", "catalogue")
 	if err != nil {
 		return err
 	}
@@ -48,6 +48,11 @@ func iSetFilterTeamTo(team string) error {
 	return nil
 }
 
+func iSetFilterAppTo(app string) error {
+	scanner.Filter.App = app
+	return nil
+}
+
 func iScanTheCatalogRoot() error {
 	var err error
 	descriptors, err = scanner.Scan(context.Background())
@@ -62,8 +67,9 @@ func iShouldDiscoverDescriptors(count int) error {
 }
 
 func RegisterScanSteps(ctx *godog.ScenarioContext) {
-	ctx.Step(`^a catalog directory with the following structure:$`, aCatalogDirectoryWithTheFollowingStructure)
+	ctx.Step(`^a catalogue directory with the following structure:$`, aCatalogDirectoryWithTheFollowingStructure)
 	ctx.Step(`^I set filter team to "([^"]*)"$`, iSetFilterTeamTo)
-	ctx.Step(`^I scan the catalog root$`, iScanTheCatalogRoot)
+	ctx.Step(`^I set filter app to "([^"]*)"$`, iSetFilterAppTo)
+	ctx.Step(`^I scan the catalogue root$`, iScanTheCatalogRoot)
 	ctx.Step(`^I should discover (\d+) descriptors$`, iShouldDiscoverDescriptors)
 }
