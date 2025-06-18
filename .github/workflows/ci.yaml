@@ -16,6 +16,6 @@ jobs:
           go build -o appsync .
           chmod +x appsync
       - run: ./appsync generate \
-          --root ${{ secrets.CATALOG_PATH }} \
+          --root ./sample \
           --repos-file repos.yaml
           --token ${{ secrets.GITHUB_TOKEN }}
