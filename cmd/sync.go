@@ -57,6 +57,8 @@ func init() {
 				if err != nil {
 					return err
 				}
+				// repoPath := filepath.ToSlash(filepath.Join(".applications", rel))
+				// filesByTeam[team][repoPath] = content
 				filesByTeam[team][rel] = content
 				return nil
 			})

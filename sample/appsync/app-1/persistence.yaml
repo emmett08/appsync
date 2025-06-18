@@ -1,0 +1,6 @@
+apiVersion: dpe.comcast.com/v1
+kind: Persistence
+metadata:
+    name: app-1-persistence
+spec:
+    appName: app-1

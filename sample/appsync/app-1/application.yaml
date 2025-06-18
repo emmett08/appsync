@@ -1,22 +1,11 @@
 apiVersion: dpe.comcast.com/v1
 kind: Application
 metadata:
-  name: cli
-  labels:
-    dpe.comcast.com/application-role: tooling
+    name: app-1
 spec:
-  lifecycle: alpha
-  displayName: AppSync CLI
-  description: |
-    The AppSync CLI is responsible for scanning a monorepo, ~generating
-    Kubernetes CRDs for each application~, and automating PRs to the
-    team-specific GitHub repositories.
-  links:
-    - title: Repo
-      type: repo
-      location: emmett08/appsync
-  dependencies:
-  # - name: config-service
-  #   team: platform
-  #   relationship:
-  #     - uses-api
+    lifecycle: alpha
+    displayName: app-1
+    links:
+        - title: Repo
+          type: repo
+          location: emmett08/appsync

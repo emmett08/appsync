@@ -1,0 +1,6 @@
+apiVersion: dpe.comcast.com/v1
+kind: Edge
+metadata:
+    name: app-1-edge
+spec:
+    appName: app-1

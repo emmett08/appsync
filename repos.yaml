@@ -2,3 +2,6 @@ repos:
   - team: appsync
     owner: emmett08
     repo: appsync
+  - team: core-platform
+    owner: NBCUDTC
+    repo: ott-reference-app

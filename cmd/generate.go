@@ -54,12 +54,16 @@ func init() {
 
 				crds := factory.Create(d, repoLoc)
 				appDir := filepath.Join(dest, d.App)
+				// appDir := filepath.Join(dest, ".applications", d.Team, d.App)
 				files, err := renderer.Render(crds, appDir)
 				if err != nil {
 					return fmt.Errorf("render app %s: %w", d.App, err)
 				}
-				for path := range files {
-					fmt.Println("generated", path)
+				for path, content := range files {
+					if err := os.WriteFile(path, content, 0644); err != nil {
+						return fmt.Errorf("writing file %q: %w", path, err)
+					}
+					fmt.Println("wrote", path)
 				}
 			}
 			return nil
