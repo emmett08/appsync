@@ -12,8 +12,9 @@ jobs:
         with:
           go-version: '1.22'
       - run: go test ./features -v
-      - run: go build -o appsync .
-             chmod +x appsync
+      - run: |
+          go build -o appsync .
+          chmod +x appsync
       - run: ./appsync generate \
           --root ${{ secrets.CATALOG_PATH }} \
           --repos-file repos.yaml
