@@ -1,12 +1,23 @@
-name: CI
-on: [push, pull_request]
+name: Appsync
+on:
+  workflow_dispatch:
 jobs:
-  test:
+  sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          repository: organisation/appsync
       - uses: actions/setup-go@v5
-        with: { go-version: '1.22.x' }
-      - run: go vet ./...
-      - run: staticcheck ./...
+        with:
+          go-version: '1.22'
       - run: go test ./...
+      - run: go build ./cmd/appsync
+      - run: ./appsync sync \
+          --root ${{ secrets.CATALOG_PATH }} \
+          --owner NBCUDTC \
+          --repo ott-reference-app \
+          --team core-platform \
+          --app ott-reference-app \
+          --mode pr \
+          --token ${{ secrets.GITHUB_TOKEN }}

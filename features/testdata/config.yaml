@@ -1,5 +1,0 @@
-skeleton: testdata/skeleton
-applicationsDir: ".applications"
-tenantRepos:
-    - testdata/repos/ott-ref-app
-    - testdata/repos/ovp
