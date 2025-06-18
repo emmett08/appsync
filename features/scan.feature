@@ -1,6 +1,6 @@
 Feature: Catalog scanning
   As an operator
-  I want to discover all <team>/<app> entries under the catalogueue root
+  I want to discover all <team>/<app> entries under the catalogue root
   So that I can generate descriptors for each application
 
   Background:
