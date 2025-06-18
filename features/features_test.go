@@ -7,6 +7,7 @@ import (
 )
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
+	RegisterFetchReposSteps(ctx)
 	RegisterScanSteps(ctx)
 	RegisterPRSteps(ctx)
 }
