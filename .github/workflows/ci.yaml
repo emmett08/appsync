@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: organisation/appsync
+          repository: emmett08/appsync
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
