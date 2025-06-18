@@ -1,0 +1,11 @@
+apiVersion: dpe.comcast.com/v1
+kind: Application
+metadata:
+    name: app-1
+spec:
+    lifecycle: alpha
+    displayName: app-1
+    links:
+        - title: Repo
+          type: repo
+          location: emmett08/appsync
