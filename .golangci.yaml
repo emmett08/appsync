@@ -1,5 +1,6 @@
 run:
   timeout: 5m
+
 linters:
   enable:
     - errcheck
@@ -8,6 +9,9 @@ linters:
     - revive
     - staticcheck
     - unused
+
 issues:
   exclude-rules:
-    - text: "G104" # https://securego.io/docs/rules/g104
+    - linters:
+        - gosec
+      text: "G104"
