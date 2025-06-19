@@ -7,6 +7,7 @@ toolchain go1.24.3
 require (
 	github.com/cucumber/godog v0.15.0
 	github.com/google/go-github/v60 v60.0.0
+	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/oauth2 v0.30.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -25,4 +26,5 @@ require (
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
+	golang.org/x/sys v0.26.0 // indirect
 )
