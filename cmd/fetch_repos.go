@@ -66,6 +66,7 @@ func newFetchCmd() *cobra.Command {
 					url += sep + "ref=" + ref
 				}
 
+				//nolint:gosec // G107: urlStr is parsed & host‐whitelisted above
 				resp, err := http.Get(url)
 				if err != nil {
 					return fmt.Errorf("fetch listing: %w", err)

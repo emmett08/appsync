@@ -23,7 +23,7 @@ func init() {
 	cmd := &cobra.Command{
 		Use:   "generate",
 		Short: "Generate Application CRs into a local sample directory",
-		RunE: func(_ *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			data, err := os.ReadFile(reposFile)
 			if err != nil {
 				return fmt.Errorf("read repos file: %w", err)
