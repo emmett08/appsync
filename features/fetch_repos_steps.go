@@ -89,23 +89,6 @@ func theFileShouldContain(path string, expect *godog.DocString) error {
 }
 
 func RegisterFetchReposSteps(ctx *godog.ScenarioContext) {
-	//ctx.After(func(c context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
-	//	if apiServer != nil {
-	//		apiServer.Close()
-	//	}
-	//	if outputFile != "" {
-	//		_ = os.Remove(outputFile)
-	//	}
-	//
-	//	err := cmd.RootCmd.Flags().Set("regex", defaultRegex)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//
-	//	apiServer, apiURL, outputFile, customRegex, ref, execErr = nil, "", "", "", "", nil
-	//	return c, nil
-	//})
-
 	ctx.Step(`^a running API server that returns the following JSON:$`, aRunningAPIServer)
 	ctx.Step(`^an output file path "([^"]*)"$`, anOutputFilePath)
 	ctx.Step(`^I use regex `+"`"+`(.+)`+"`"+`$`, iUseRegex)
