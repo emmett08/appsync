@@ -1,6 +1,8 @@
 package domain
 
-import yaml "gopkg.in/yaml.v3"
+import (
+	yamlv3 "gopkg.in/yaml.v3"
+)
 
 type PersistenceCRD struct {
 	APIVersion string `yaml:"apiVersion"`
@@ -22,4 +24,4 @@ func NewPersistenceCRD(app string) *PersistenceCRD {
 
 func (c *PersistenceCRD) FileName() string { return "persistence.yaml" }
 
-func (c *PersistenceCRD) YAML() ([]byte, error) { return yaml.Marshal(c) }
+func (c *PersistenceCRD) YAML() ([]byte, error) { return yamlv3.Marshal(c) }

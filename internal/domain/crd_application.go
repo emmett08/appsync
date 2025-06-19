@@ -1,6 +1,8 @@
 package domain
 
-import yaml "gopkg.in/yaml.v3"
+import (
+	yamlv3 "gopkg.in/yaml.v3"
+)
 
 type ApplicationCRD struct {
 	APIVersion string `yaml:"apiVersion"`
@@ -47,4 +49,4 @@ func NewApplicationCRD(name, lifecycle, displayName, repo string) *ApplicationCR
 
 func (c *ApplicationCRD) FileName() string { return "application.yaml" }
 
-func (c *ApplicationCRD) YAML() ([]byte, error) { return yaml.Marshal(c) }
+func (c *ApplicationCRD) YAML() ([]byte, error) { return yamlv3.Marshal(c) }

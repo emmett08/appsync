@@ -1,6 +1,8 @@
 package domain
 
-import yaml "gopkg.in/yaml.v3"
+import (
+	yamlv3 "gopkg.in/yaml.v3"
+)
 
 type EdgeCRD struct {
 	APIVersion string `yaml:"apiVersion"`
@@ -22,4 +24,4 @@ func NewEdgeCRD(app string) *EdgeCRD {
 
 func (c *EdgeCRD) FileName() string { return "edge.yaml" }
 
-func (c *EdgeCRD) YAML() ([]byte, error) { return yaml.Marshal(c) }
+func (c *EdgeCRD) YAML() ([]byte, error) { return yamlv3.Marshal(c) }
