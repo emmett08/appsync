@@ -58,15 +58,18 @@ jobs:
         run: |
           gosec -severity=HIGH -confidence=HIGH ./cmd/... ./internal/...
 
-      - name: Generate SBOM
+      - name: Generate SPDX SBOM
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-          syft . -o cyclonedx-json=sbom.json
+          syft . -o spdx-json=sbom.json
 
       - name: Scan SBOM for vulnerabilities
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-          trivy sbom sbom.json --exit-code 1 --format json --output trivy-report.json
+          trivy sbom sbom.json \
+            --format json \
+            --exit-code 1 \
+            --output trivy-report.json
 
       - name: Upload vulnerability report
         uses: actions/upload-artifact@v4
