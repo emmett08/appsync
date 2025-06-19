@@ -46,7 +46,7 @@ jobs:
       - name: Install golangci-lint
         uses: golangci/golangci-lint-action@v4
         with:
-          version: v8.0.0
+          version: v2.1.6
 
       - name: Static analysis
         run: |
