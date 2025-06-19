@@ -1,8 +1,6 @@
 package domain
 
-import (
-	"gopkg.in/yaml.v3"
-)
+import yaml "gopkg.in/yaml.v3"
 
 type EdgeCRD struct {
 	APIVersion string `yaml:"apiVersion"`
