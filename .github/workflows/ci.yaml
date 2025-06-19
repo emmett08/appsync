@@ -43,17 +43,16 @@ jobs:
         with:
           go-version: '1.24'
 
-      - name: Install golangci-lint
-        uses: golangci/golangci-lint-action@v4
-        with:
-          version: v2.1.6
-          args: --timeout 5m
+      - name: Install golangci-lint v1.59.1
+        run: |
+          curl -sSL https://github.com/golangci/golangci-lint/releases/download/v1.59.1/golangci-lint-1.59.1-linux-amd64.tar.gz \
+            | sudo tar -xz -C /usr/local/bin --strip-components=1 golangci-lint-1.59.1-linux-amd64/golangci-lint
 
-      - name: Go vet
-        run: go vet ./...
-
-      - name: Gosec scan
-        run: gosec ./...
+      - name: Run static analysis
+        run: |
+          go vet ./...
+          golangci-lint run --out-format=github-actions --timeout 5m
+          gosec ./...
 
       - name: Generate SBOM
         run: |
