@@ -7,7 +7,7 @@ import (
 	"github.com/google/go-github/v60/github"
 	"github.com/spf13/cobra"
 	"golang.org/x/oauth2"
-	"gopkg.in/yaml.v3"
+	yamlv3 "gopkg.in/yaml.v3"
 	"net/http"
 	"os"
 	"regexp"
@@ -120,7 +120,7 @@ func newFetchCmd() *cobra.Command {
 			}
 
 			out := map[string]any{"repos": repos}
-			b, err := yaml.Marshal(out)
+			b, err := yamlv3.Marshal(out)
 			if err != nil {
 				return err
 			}

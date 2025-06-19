@@ -9,7 +9,7 @@ import (
 	"github.com/emmett08/appsync/internal/app"
 	"github.com/emmett08/appsync/internal/config"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v3"
+	yamlv3 "gopkg.in/yaml.v3"
 )
 
 func init() {
@@ -31,7 +31,7 @@ func init() {
 			var wrapper struct {
 				Repos config.RepoConfigs `yaml:"repos"`
 			}
-			if err := yaml.Unmarshal(data, &wrapper); err != nil {
+			if err := yamlv3.Unmarshal(data, &wrapper); err != nil {
 				return fmt.Errorf("unmarshal repos file: %w", err)
 			}
 
