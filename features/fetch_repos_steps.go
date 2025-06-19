@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/cucumber/godog"
 	"github.com/emmett08/appsync/cmd"
-	"gopkg.in/yaml.v3"
+	yamlv3 "gopkg.in/yaml.v3"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -76,10 +76,10 @@ func theFileShouldContain(path string, expect *godog.DocString) error {
 		return fmt.Errorf("read %q: %w", path, err)
 	}
 	var exp, got interface{}
-	if err := yaml.Unmarshal([]byte(expect.Content), &exp); err != nil {
+	if err := yamlv3.Unmarshal([]byte(expect.Content), &exp); err != nil {
 		return fmt.Errorf("parse expected YAML: %w", err)
 	}
-	if err := yaml.Unmarshal(data, &got); err != nil {
+	if err := yamlv3.Unmarshal(data, &got); err != nil {
 		return fmt.Errorf("parse actual YAML: %w", err)
 	}
 	if !reflect.DeepEqual(exp, got) {
