@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/oauth2"
 	yamlv3 "gopkg.in/yaml.v3"
+	"net"
 	"net/http"
 	urlpkg "net/url"
 	"os"
@@ -50,7 +51,10 @@ func newFetchCmd() *cobra.Command {
 					return fmt.Errorf("invalid api-url: %w", err)
 				}
 				host := u.Hostname()
-				if host != "api.github.com" {
+				// allow real GitHub or local loopback for tests
+				ip := net.ParseIP(host)
+				isLoopback := ip != nil && ip.IsLoopback()
+				if host != "api.github.com" && !isLoopback {
 					return fmt.Errorf("disallowed api-url host: %s", host)
 				}
 				url := apiURL
