@@ -4,7 +4,10 @@ TENANTS_ROOT  ?= /path/to/dpe/tenants/.applications
 SAMPLE_ROOT   ?= ./sample
 REPOS_FILE    ?= repos.yaml
 
-.PHONY: all build install sync-ott generate sync-sample test-features clean
+.PHONY: login all build install sync-ott generate sync-sample test-features clean
+
+login:
+	@gh auth login
 
 all: build
 

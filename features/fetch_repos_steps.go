@@ -1,103 +1,120 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"github.com/cucumber/godog"
+	"github.com/emmett08/appsync/cmd"
+	"gopkg.in/yaml.v3"
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"os/exec"
-	"strings"
-
-	"github.com/cucumber/godog"
+	"reflect"
 )
 
 var (
-	apiServer  *httptest.Server
-	apiURL     string
-	outputFile string
-	cmdErr     error
+	apiServer   *httptest.Server
+	apiURL      string
+	outputFile  string
+	customRegex string
+	ref         string
+	execErr     error
 )
+
+const defaultRegex = `(?P<team>[^_]+)_(?P<owner>[^_]+)_(?P<repo>[^_]+)$`
 
 func aRunningAPIServer(body *godog.DocString) error {
 	apiServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, body.Content)
+		_, _ = fmt.Fprint(w, body.Content)
 	}))
 	apiURL = apiServer.URL
 	return nil
 }
 
-func anOutputFilePath(p string) error {
-	outputFile = p
-	return nil
-}
+func anOutputFilePath(path string) error { outputFile = path; return nil }
+func iUseRegex(expr string) error        { customRegex = expr; return nil }
+func iUseRef(r string) error             { ref = r; return nil }
 
-func runCLI(extra ...string) {
-	base := []string{
-		"run", "..", "--", "fetch-repos",
-		"--path", "", "--token", "dummy-token",
-		"--api-url", apiURL,
-		"--output", outputFile,
+func runFetch(owner, repo string) error {
+	regex := defaultRegex
+	if customRegex != "" {
+		regex = customRegex
 	}
-	args := append(base, extra...)
-	cmd := exec.Command("go", args...)
-	cmdErr = cmd.Run()
-}
-
-func iRunFetchReposDefault(owner, repo string) error {
-	runCLI("--owner", owner, "--repo", repo)
+	args := []string{
+		"fetch-repos",
+		"--owner", owner, "--repo", repo,
+		"--token", "dummy-token",
+		"--output", outputFile,
+		"--api-url", apiURL,
+		"--regex", regex,
+	}
+	if ref != "" {
+		args = append(args, "--ref", ref)
+	}
+	cmd.RootCmd.SetArgs(args)
+	execErr = cmd.RootCmd.Execute()
 	return nil
 }
 
-func iRunFetchReposWithRegex(owner, repo, regex string) error {
-	runCLI("--owner", owner, "--repo", repo, "--regex", regex)
-	return nil
-}
-
-func iRunFetchReposWithRef(owner, repo, ref string) error {
-	runCLI("--owner", owner, "--repo", repo, "--ref", ref)
-	return nil
-}
+func iRunDefault(owner, repo string) error       { return runFetch(owner, repo) }
+func iRunWithRegex(owner, repo, rx string) error { customRegex = rx; return runFetch(owner, repo) }
+func iRunWithRef(owner, repo, r string) error    { ref = r; return runFetch(owner, repo) }
 
 func theExitStatusShouldBe(code int) error {
-	if code == 0 && cmdErr == nil {
-		return nil
+	if code == 0 && execErr != nil {
+		return fmt.Errorf("expected success, got %v", execErr)
 	}
-	if ee, ok := cmdErr.(*exec.ExitError); ok && ee.ExitCode() == code {
-		return nil
+	if code != 0 && execErr == nil {
+		return fmt.Errorf("expected exit %d, got 0", code)
 	}
-	return fmt.Errorf("expected exit %d, got %v", code, cmdErr)
+	return nil
 }
 
-func theFileShouldContain(path string, body *godog.DocString) error {
+func theFileShouldContain(path string, expect *godog.DocString) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return err
+		return fmt.Errorf("read %q: %w", path, err)
 	}
-	if !strings.Contains(string(data), body.Content) {
-		return fmt.Errorf("mismatch:\nwant:\n%s\ngot:\n%s", body.Content, string(data))
+	var exp, got interface{}
+	if err := yaml.Unmarshal([]byte(expect.Content), &exp); err != nil {
+		return fmt.Errorf("parse expected YAML: %w", err)
+	}
+	if err := yaml.Unmarshal(data, &got); err != nil {
+		return fmt.Errorf("parse actual YAML: %w", err)
+	}
+	if !reflect.DeepEqual(exp, got) {
+		return fmt.Errorf("YAML content mismatch.\n\nwant:\n%s\n\ngot:\n%s", expect.Content, string(data))
 	}
 	return nil
 }
 
 func RegisterFetchReposSteps(ctx *godog.ScenarioContext) {
-	ctx.After(func(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
-		if apiServer != nil {
-			apiServer.Close()
-		}
-		if outputFile != "" {
-			os.Remove(outputFile)
-		}
-		cmdErr = nil
-		return context.Background(), nil
-	})
+	//ctx.After(func(c context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+	//	if apiServer != nil {
+	//		apiServer.Close()
+	//	}
+	//	if outputFile != "" {
+	//		_ = os.Remove(outputFile)
+	//	}
+	//
+	//	err := cmd.RootCmd.Flags().Set("regex", defaultRegex)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//
+	//	apiServer, apiURL, outputFile, customRegex, ref, execErr = nil, "", "", "", "", nil
+	//	return c, nil
+	//})
 
 	ctx.Step(`^a running API server that returns the following JSON:$`, aRunningAPIServer)
 	ctx.Step(`^an output file path "([^"]*)"$`, anOutputFilePath)
-	ctx.Step(`^I run the fetch-repos command for owner "([^"]*)" repo "([^"]*)"$`, iRunFetchReposDefault)
-	ctx.Step(`^I run the fetch-repos command for owner "([^"]*)" repo "([^"]*)" regex "([^"]*)"$`, iRunFetchReposWithRegex)
-	ctx.Step(`^I run the fetch-repos command for owner "([^"]*)" repo "([^"]*)" ref "([^"]*)"$`, iRunFetchReposWithRef)
+	ctx.Step(`^I use regex `+"`"+`(.+)`+"`"+`$`, iUseRegex)
+	ctx.Step(`^I use ref "([^"]*)"$`, iUseRef)
+
+	ctx.Step(`^I run the fetch-repos command for owner "([^"]*)" repo "([^"]*)"$`, iRunDefault)
+	ctx.Step(`^I run the fetch-repos command for owner "([^"]*)" repo "([^"]*)" regex "([^"]*)"$`, iRunWithRegex)
+	ctx.Step(`^I run the fetch-repos command for owner "([^"]*)" repo "([^"]*)" ref "([^"]*)"$`, iRunWithRef)
+
 	ctx.Step(`^the exit status should be (\d+)$`, theExitStatusShouldBe)
 	ctx.Step(`^the file "([^"]*)" should contain:$`, theFileShouldContain)
 }
