@@ -1,6 +1,8 @@
 package domain
 
-import "gopkg.in/yaml.v3"
+import (
+	"gopkg.in/yaml.v3"
+)
 
 type ApplicationCRD struct {
 	APIVersion string `yaml:"apiVersion"`
