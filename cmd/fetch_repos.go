@@ -9,6 +9,7 @@ import (
 	"golang.org/x/oauth2"
 	yamlv3 "gopkg.in/yaml.v3"
 	"net/http"
+	urlpkg "net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -43,6 +44,15 @@ func newFetchCmd() *cobra.Command {
 			var entries []entry
 
 			if apiURL != "" {
+				// validate host to satisfy G107
+				u, err := urlpkg.Parse(apiURL)
+				if err != nil {
+					return fmt.Errorf("invalid api-url: %w", err)
+				}
+				host := u.Hostname()
+				if host != "api.github.com" {
+					return fmt.Errorf("disallowed api-url host: %s", host)
+				}
 				url := apiURL
 				if ref != "" {
 					sep := "?"
@@ -124,7 +134,8 @@ func newFetchCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return os.WriteFile(output, b, 0o644)
+			// G306: use 0600 so that gosec is happy
+			return os.WriteFile(output, b, 0o600)
 		},
 	}
 

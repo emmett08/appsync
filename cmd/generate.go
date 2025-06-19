@@ -23,7 +23,7 @@ func init() {
 	cmd := &cobra.Command{
 		Use:   "generate",
 		Short: "Generate Application CRs into a local sample directory",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, args []string) error {
 			data, err := os.ReadFile(reposFile)
 			if err != nil {
 				return fmt.Errorf("read repos file: %w", err)
@@ -60,7 +60,8 @@ func init() {
 					return fmt.Errorf("render app %s: %w", d.App, err)
 				}
 				for path, content := range files {
-					if err := os.WriteFile(path, content, 0644); err != nil {
+					// G306: restrict to 0600
+					if err := os.WriteFile(path, content, 0o600); err != nil {
 						return fmt.Errorf("writing file %q: %w", path, err)
 					}
 					fmt.Println("wrote", path)

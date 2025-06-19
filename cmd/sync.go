@@ -24,7 +24,7 @@ func init() {
 	cmd := &cobra.Command{
 		Use:   "sync",
 		Short: "Push local manifests under <root> into each team's repo (opens PRs)",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, args []string) error {
 			data, err := os.ReadFile(reposFile)
 			if err != nil {
 				return fmt.Errorf("read repos file: %w", err)

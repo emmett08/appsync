@@ -14,7 +14,7 @@ type CatalogScanner struct {
 	Filter config.Filter
 }
 
-func (s CatalogScanner) Scan(ctx context.Context) ([]domain.ApplicationDescriptor, error) {
+func (s CatalogScanner) Scan(_ context.Context) ([]domain.ApplicationDescriptor, error) {
 	var out []domain.ApplicationDescriptor
 
 	teams, err := os.ReadDir(s.Root)

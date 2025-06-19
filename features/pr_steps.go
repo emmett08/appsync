@@ -33,11 +33,11 @@ func NewFakeRepo(defaultBranch string) *FakeRepoGateway {
 	}
 }
 
-func (f *FakeRepoGateway) DefaultBranch(ctx context.Context) (string, error) {
+func (f *FakeRepoGateway) DefaultBranch(_ context.Context) (string, error) {
 	return f.Default, nil
 }
 
-func (f *FakeRepoGateway) CreateBranch(ctx context.Context, from, to string) error {
+func (f *FakeRepoGateway) CreateBranch(_ context.Context, from, to string) error {
 	if _, ok := f.Branches[from]; !ok {
 		return fmt.Errorf("base branch %s does not exist", from)
 	}
@@ -45,7 +45,7 @@ func (f *FakeRepoGateway) CreateBranch(ctx context.Context, from, to string) err
 	return nil
 }
 
-func (f *FakeRepoGateway) WriteFile(ctx context.Context, filePath string, content []byte, branch string) error {
+func (f *FakeRepoGateway) WriteFile(_ context.Context, filePath string, content []byte, branch string) error {
 	if _, ok := f.Branches[branch]; !ok {
 		return fmt.Errorf("branch %s does not exist", branch)
 	}
@@ -56,7 +56,7 @@ func (f *FakeRepoGateway) WriteFile(ctx context.Context, filePath string, conten
 	return nil
 }
 
-func (f *FakeRepoGateway) PullRequest(ctx context.Context, title, body, base, head string) (int, error) {
+func (f *FakeRepoGateway) PullRequest(_ context.Context, title, body, base, head string) (int, error) {
 	f.PRs = append(f.PRs, PullRequest{Title: title, Body: body, Base: base, Head: head})
 	return len(f.PRs), nil
 }

@@ -23,7 +23,7 @@ var (
 const defaultRegex = `(?P<team>[^_]+)_(?P<owner>[^_]+)_(?P<repo>[^_]+)$`
 
 func aRunningAPIServer(body *godog.DocString) error {
-	apiServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	apiServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = fmt.Fprint(w, body.Content)
 	}))
