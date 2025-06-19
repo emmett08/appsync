@@ -30,10 +30,10 @@ Feature: fetch-repos CLI
 
   Scenario: generate with a custom regex
     Given I use regex `(?P<team>[^_]+)_(?P<repo>.+)`
-    And an output file path "custom.yaml"
+    And an output file path "repos.yaml"
     When I run the fetch-repos command for owner "my-org" repo "my-repo" regex "(?P<team>[^_]+)_(?P<repo>.+)"
     Then the exit status should be 0
-    And the file "custom.yaml" should contain:
+    And the file "repos.yaml" should contain:
       """
       repos:
         - team: teamA
@@ -46,10 +46,10 @@ Feature: fetch-repos CLI
 
   Scenario: generate repos.yaml from a branch
     Given I use ref "develop"
-    And an output file path "branch.yaml"
+    And an output file path "repos.yaml"
     When I run the fetch-repos command for owner "my-org" repo "my-repo" ref "develop"
     Then the exit status should be 0
-    And the file "branch.yaml" should contain:
+    And the file "repos.yaml" should contain:
       """
       repos:
         - team: teamA
@@ -62,10 +62,10 @@ Feature: fetch-repos CLI
 
   Scenario: generate repos.yaml from a commit sha
     Given I use ref "deadbeef"
-    And an output file path "sha.yaml"
+    And an output file path "repos.yaml"
     When I run the fetch-repos command for owner "my-org" repo "my-repo" ref "deadbeef"
     Then the exit status should be 0
-    And the file "sha.yaml" should contain:
+    And the file "repos.yaml" should contain:
       """
       repos:
         - team: teamA

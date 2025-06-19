@@ -1,0 +1,7 @@
+repos:
+    - owner: ownerA
+      repo: repoA
+      team: teamA
+    - owner: ownerB
+      repo: repoB
+      team: teamB
