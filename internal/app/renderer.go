@@ -11,7 +11,8 @@ type ManifestRenderer struct{}
 
 func (ManifestRenderer) Render(crds []domain.CRD, destDir string) (map[string][]byte, error) {
 	files := make(map[string][]byte, len(crds))
-	if err := os.MkdirAll(destDir, 0755); err != nil {
+	// G301: restrict directory perms
+	if err := os.MkdirAll(destDir, 0750); err != nil {
 		return nil, err
 	}
 	for _, c := range crds {

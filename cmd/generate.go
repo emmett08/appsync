@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/emmett08/appsync/internal/app"
 	"github.com/emmett08/appsync/internal/config"
@@ -24,6 +25,12 @@ func init() {
 		Use:   "generate",
 		Short: "Generate Application CRs into a local sample directory",
 		RunE: func(_ *cobra.Command, _ []string) error {
+			// sanitise reposFile path and forbid upward traversal
+			cleanRepos := filepath.Clean(reposFile)
+			if strings.Contains(cleanRepos, "..") {
+				return fmt.Errorf("invalid repos file path: %q", reposFile)
+			}
+			//nolint:gosec // path is sanitised above
 			data, err := os.ReadFile(reposFile)
 			if err != nil {
 				return fmt.Errorf("read repos file: %w", err)
@@ -61,6 +68,7 @@ func init() {
 				}
 				for path, content := range files {
 					// G306: restrict to 0600
+					//nolint:gosec // path is derived from trusted root+walk
 					if err := os.WriteFile(path, content, 0o600); err != nil {
 						return fmt.Errorf("writing file %q: %w", path, err)
 					}

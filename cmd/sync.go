@@ -25,6 +25,12 @@ func init() {
 		Use:   "sync",
 		Short: "Push local manifests under <root> into each team's repo (opens PRs)",
 		RunE: func(_ *cobra.Command, _ []string) error {
+			// sanitise reposFile path and forbid upward traversal
+			cleanRepos := filepath.Clean(reposFile)
+			if strings.Contains(cleanRepos, "..") {
+				return fmt.Errorf("invalid repos file path: %q", reposFile)
+			}
+			//nolint:gosec // path is sanitised above
 			data, err := os.ReadFile(reposFile)
 			if err != nil {
 				return fmt.Errorf("read repos file: %w", err)

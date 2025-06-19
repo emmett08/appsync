@@ -71,6 +71,7 @@ func theExitStatusShouldBe(code int) error {
 }
 
 func theFileShouldContain(path string, expect *godog.DocString) error {
+	//nolint:gosec // test helper reading a local sample file
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return fmt.Errorf("read %q: %w", path, err)
