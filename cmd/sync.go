@@ -59,6 +59,12 @@ func init() {
 				if _, ok := filesByTeam[team]; !ok {
 					filesByTeam[team] = map[string][]byte{}
 				}
+				// sanitise path and forbid upward traversal
+				cleanPath := filepath.Clean(path)
+				if strings.Contains(cleanPath, "..") {
+					return fmt.Errorf("invalid walk path: %q", path)
+				}
+				//nolint:gosec // cleaned path from local directory
 				content, err := os.ReadFile(path)
 				if err != nil {
 					return err

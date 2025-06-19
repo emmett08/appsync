@@ -8,7 +8,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"reflect"
+	"strings"
 )
 
 var (
@@ -71,6 +73,11 @@ func theExitStatusShouldBe(code int) error {
 }
 
 func theFileShouldContain(path string, expect *godog.DocString) error {
+	// sanitise path and forbid upward traversal
+	cleanPath := filepath.Clean(path)
+	if strings.Contains(cleanPath, "..") {
+		return fmt.Errorf("invalid read path: %q", path)
+	}
 	//nolint:gosec // test helper reading a local sample file
 	data, err := os.ReadFile(path)
 	if err != nil {
