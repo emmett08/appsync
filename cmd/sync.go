@@ -54,6 +54,7 @@ func init() {
 				if err != nil {
 					return err
 				}
+				// TODO: implicit business rule
 				parts := strings.Split(rel, string(os.PathSeparator))
 				team := parts[0]
 				if _, ok := filesByTeam[team]; !ok {

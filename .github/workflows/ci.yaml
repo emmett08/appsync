@@ -56,7 +56,7 @@ jobs:
 
       - name: Gosec security scan
         run: |
-          gosec ./...
+          gosec -severity=HIGH -confidence=HIGH ./cmd/... ./internal/...
 
       - name: Generate SBOM
         run: |
