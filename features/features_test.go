@@ -14,7 +14,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 
 func TestFeatures(t *testing.T) {
 	suite := godog.TestSuite{
-		Name:                "appsync",
+		Name:                "dpe-dx-appsync",
 		ScenarioInitializer: InitializeScenario,
 		Options: &godog.Options{
 			Format:   "pretty",
