@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: emmett08/appsync
+          repository: emmett08/dpe-dx-appsync
 
       - uses: actions/setup-go@v5
         with:
@@ -23,8 +23,8 @@ jobs:
 
       - name: Build CLI
         run: |
-          go build -o appsync .
-          chmod +x appsync
+          go build -o dpe-dx-appsync .
+          chmod +x dpe-dx-appsync
 
       - name: Generate sample CRs
         run: |

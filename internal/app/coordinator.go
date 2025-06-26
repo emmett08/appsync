@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/emmett08/appsync/internal/config"
+	"github.com/emmett08/dpe-dx-appsync/internal/config"
 )
 
 type SyncCoordinator struct {

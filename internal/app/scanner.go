@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/emmett08/appsync/internal/config"
-	"github.com/emmett08/appsync/internal/domain"
+	"github.com/emmett08/dpe-dx-appsync/internal/config"
+	"github.com/emmett08/dpe-dx-appsync/internal/domain"
 )
 
 type CatalogScanner struct {

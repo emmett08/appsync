@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/cucumber/godog"
-	"github.com/emmett08/appsync/cmd"
+	"github.com/emmett08/dpe-dx-appsync/cmd"
 	yamlv3 "gopkg.in/yaml.v3"
 	"net/http"
 	"net/http/httptest"

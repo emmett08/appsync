@@ -1,4 +1,4 @@
-module github.com/emmett08/appsync
+module github.com/emmett08/dpe-dx-appsync
 
 go 1.23.0
 

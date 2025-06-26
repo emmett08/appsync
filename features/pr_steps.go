@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/cucumber/godog"
-	"github.com/emmett08/appsync/internal/app"
+	"github.com/emmett08/dpe-dx-appsync/internal/app"
 )
 
 type FakeRepoGateway struct {

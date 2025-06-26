@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 
 	"github.com/cucumber/godog"
-	"github.com/emmett08/appsync/internal/app"
-	"github.com/emmett08/appsync/internal/config"
-	"github.com/emmett08/appsync/internal/domain"
+	"github.com/emmett08/dpe-dx-appsync/internal/app"
+	"github.com/emmett08/dpe-dx-appsync/internal/config"
+	"github.com/emmett08/dpe-dx-appsync/internal/domain"
 )
 
 var (

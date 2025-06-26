@@ -1,6 +1,6 @@
 package app
 
-import "github.com/emmett08/appsync/internal/domain"
+import "github.com/emmett08/dpe-dx-appsync/internal/domain"
 
 type CRDFactory struct{}
 

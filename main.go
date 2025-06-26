@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/emmett08/appsync/cmd"
+	"github.com/emmett08/dpe-dx-appsync/cmd"
 	"github.com/sirupsen/logrus"
 )
 

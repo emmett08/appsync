@@ -8,4 +8,4 @@ spec:
     links:
         - title: Repo
           type: repo
-          location: emmett08/appsync
+          location: emmett08/dpe-dx-appsync

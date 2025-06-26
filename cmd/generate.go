@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/emmett08/appsync/internal/app"
-	"github.com/emmett08/appsync/internal/config"
+	"github.com/emmett08/dpe-dx-appsync/internal/app"
+	"github.com/emmett08/dpe-dx-appsync/internal/config"
 	"github.com/spf13/cobra"
 	yamlv3 "gopkg.in/yaml.v3"
 )

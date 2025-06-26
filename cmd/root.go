@@ -5,7 +5,7 @@ import (
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "appsync",
+	Use:   "dpe-dx-appsync",
 	Short: "Synchronise 1AI application skeletons into tenant repos",
 }
 
