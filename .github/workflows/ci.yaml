@@ -28,7 +28,7 @@ jobs:
 
       - name: Generate sample CRs
         run: |
-          ./appsync generate \
+          ./dpe-dx-appsync generate  \
             --root ./sample \
             --repos-file repos.yaml \
             --token ${{ secrets.GITHUB_TOKEN }}
